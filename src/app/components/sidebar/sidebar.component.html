@@ -1,1 +1,16 @@
-<p>sidebar works!</p>
+<div class="bg-white p-8 h-full">
+  <a class="text-xl font-extrabold" [routerLink]="'/'">YOURLOGO</a>
+
+  <ul class="mt-8 text-gray-600">
+    <a
+      *ngFor="let menu of menus"
+      [routerLink]="menu.path"
+      class="flex items-stretch gap-4 hover:text-blue-500 mb-6"
+    >
+      <span class="material-symbols-outlined">{{ menu.icon }}</span>
+      <a class="block text-sm">
+        {{ menu.name }}
+      </a>
+    </a>
+  </ul>
+</div>
