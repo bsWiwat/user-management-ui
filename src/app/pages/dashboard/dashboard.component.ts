@@ -9,6 +9,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddUserComponent } from '../../features/dashboard/add-user/add-user.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from '../../features/dashboard/services/user.service';
+import { ToastrService } from 'ngx-toastr';
+import { User } from '../../features/dashboard/models/User';
+import { CreateUserDTO } from '../../features/dashboard/models/UserDTO';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,6 +33,7 @@ export class DashboardComponent {
   constructor(
     private dialog: MatDialog,
     private userService: UserService,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit() {
@@ -37,13 +41,12 @@ export class DashboardComponent {
   }
 
   sort_by = [
-    { value: 'asc', viewValue: 'ASC' },
-    { value: 'desc', viewValue: 'DESC' },
-    { value: 'newest', viewValue: 'Newest' },
-    { value: 'oldest', viewValue: 'Oldest' },
+    { value: '', viewValue: 'None' },
+    { value: 'name', viewValue: 'Name' },
+    { value: 'createddate', viewValue: 'Date Create' },
   ];
 
-  users: any[] = [];
+  users: User[] = [];
   total = 0;
 
   orderBy = '';
@@ -95,7 +98,7 @@ export class DashboardComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        const payload = {
+        const payload: CreateUserDTO = {
           firstName: result.firstName,
           lastName: result.lastName,
           email: result.email,
@@ -116,15 +119,18 @@ export class DashboardComponent {
 
         this.userService.addUser(payload).subscribe({
           next: () => {
+            this.toastr.success('User created successfully');
             this.loadUsers();
           },
-          error: (err) => console.error(err),
+          error: () => {
+            this.toastr.error('Create failed');
+          },
         });
       }
     });
   }
 
-  openEditUser(user: any) {
+  openEditUser(user: User) {
     const dialogRef = this.dialog.open(AddUserComponent, {
       width: '80vw',
       maxWidth: '95vw',
@@ -134,14 +140,19 @@ export class DashboardComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.userService.updateUser(user.userId, result).subscribe({
-          next: () => this.loadUsers(),
-          error: (err) => console.error(err),
+          next: () => {
+            this.toastr.success('User updated');
+            this.loadUsers();
+          },
+          error: () => {
+            this.toastr.error('Update failed');
+          },
         });
       }
     });
   }
 
-  deleteUser(user: any) {
+  deleteUser(user: User) {
     const confirmDelete = confirm(
       `Delete user ${user.firstName} ${user.lastName}?`,
     );
@@ -150,9 +161,12 @@ export class DashboardComponent {
 
     this.userService.deleteUser(user.userId).subscribe({
       next: () => {
+        this.toastr.success('User deleted');
         this.loadUsers();
       },
-      error: (err) => console.error(err),
+      error: () => {
+        this.toastr.error('Delete failed');
+      },
     });
   }
 }

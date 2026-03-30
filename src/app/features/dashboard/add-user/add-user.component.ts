@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../services/user.service';
 import { first, last } from 'rxjs';
+import { Role, User } from '../models/User';
 
 @Component({
   selector: 'app-add-user',
@@ -18,7 +19,7 @@ export class AddUserComponent {
   lastName: string = '';
   email: string = '';
   phone: string = '';
-  roles: any[] = [];
+  roles: Role[] = [];
   roleId: string = '';
   username: string = '';
   password: string = '';
@@ -27,13 +28,13 @@ export class AddUserComponent {
   constructor(
     private dialogRef: MatDialogRef<AddUserComponent>,
     private userService: UserService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: User | null,
   ) {}
 
   ngOnInit() {
     this.userService.getRoles().subscribe({
       next: (res) => {
-        this.roles = res.data || res;
+        this.roles = res.data;
       },
       error: (err) => console.error(err),
     });

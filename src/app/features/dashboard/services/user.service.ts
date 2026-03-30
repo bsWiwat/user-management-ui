@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { ApiResponse } from '../models/ApiResponse';
+import { PagedResponse } from '../models/PagedResponse';
+import { Role, User } from '../models/User';
+import { CreateUserDTO } from '../models/UserDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -22,16 +26,19 @@ export class UserService {
       .set('pageSize', pageSize)
       .set('search', search);
 
-    return this.http.get<any>(`${environment.apiBaseUrl}/api/user/users`, {
-      params: params,
-    });
+    return this.http.get<ApiResponse<PagedResponse<User>>>(
+      `${environment.apiBaseUrl}/api/user/users`,
+      {
+        params: params,
+      },
+    );
   }
 
-  addUser(payload: any) {
+  addUser(payload: CreateUserDTO) {
     return this.http.post(`${environment.apiBaseUrl}/api/user/user`, payload);
   }
 
-  updateUser(id: string, payload: any) {
+  updateUser(id: string, payload: User) {
     return this.http.put(
       `${environment.apiBaseUrl}/api/User/user/${id}`,
       payload,
@@ -43,6 +50,8 @@ export class UserService {
   }
 
   getRoles() {
-    return this.http.get<any>(`${environment.apiBaseUrl}/api/User/roles`);
+    return this.http.get<ApiResponse<Role[]>>(
+      `${environment.apiBaseUrl}/api/User/roles`,
+    );
   }
 }
