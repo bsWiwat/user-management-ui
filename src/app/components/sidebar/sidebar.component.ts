@@ -15,7 +15,7 @@ export class SidebarComponent {
     { name: 'Users', path: '/users', icon: 'bar_chart' },
     { name: 'Documents', path: '/documents', icon: 'description' },
     { name: 'Photos', path: '/photos', icon: 'photo' },
-    { name: 'Hierarchy', path: '/hierarchy', icon: 'folder' },
+    { name: 'Hierarchy', path: '/hierarchy', icon: 'toll' },
     { name: 'Message', path: '/massage', icon: 'message' },
     { name: 'Help', path: '/help', icon: 'help' },
     { name: 'Settings', path: '/settings', icon: 'settings' },

@@ -4,10 +4,19 @@
   <div class="flex flex-row items-center gap-4 mb-6">
     <div class="bg-white rounded-xl p-2 flex items-center gap-4 flex-1">
       <span class="material-symbols-outlined text-gray-400">search</span>
-      <input type="text" placeholder="Search" class="w-full outline-none" />
+      <input
+        type="text"
+        placeholder="Search"
+        class="w-full outline-none"
+        [(ngModel)]="search"
+        (keyup)="onSearch()"
+      />
     </div>
 
-    <button class="p-2 rounded-md bg-blue-500 text-sm text-white">
+    <button
+      (click)="openAddUser()"
+      class="p-2 rounded-md bg-blue-500 text-sm text-white"
+    >
       Add User +
     </button>
 
@@ -46,19 +55,21 @@
     >
       <div class="col-span-6 px-6 flex items-center justify-between">
         <div class="">
-          <p class="font-medium m-0">{{ user.name }}</p>
+          <p class="font-medium m-0">
+            {{ user.firstName }} {{ user.lastName }}
+          </p>
           <span class="text-sm font-thin text-gray-400">{{ user.email }}</span>
         </div>
         <div class="px-12">
           <span
             class="inline-block w-28 text-center text-xs font-thin bg-blue-500 p-1 px-2 rounded-md text-white"
           >
-            {{ user.permission }}
+            {{ user.role.roleName }}
           </span>
         </div>
       </div>
-      <div class="col-span-2">{{ user.createdDate }}</div>
-      <div class="col-span-3">{{ user.role }}</div>
+      <div class="col-span-2">{{ user.dateCreate | date: "dd MMM, yyyy" }}</div>
+      <div class="col-span-3">{{ user.role.roleName }}</div>
       <div
         class="col-span-1 text-center gap-2 flex items-center justify-center"
       >
@@ -78,9 +89,10 @@
 
   <footer class="flex justify-center items-center bg-transparent">
     <mat-paginator
-      [length]="100"
-      [pageSize]="10"
+      [length]="total"
+      [pageSize]="pageSize"
       [pageSizeOptions]="[5, 10, 25, 100]"
+      (page)="onPageChange($event)"
       aria-label="Select page"
     >
     </mat-paginator>

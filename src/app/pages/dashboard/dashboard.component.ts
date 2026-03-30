@@ -5,6 +5,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AddUserComponent } from '../../features/dashboard/add-user/add-user.component';
+import { HttpClientModule } from '@angular/common/http';
+import { UserService } from '../../features/dashboard/services/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,11 +20,22 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatInputModule,
     FormsModule,
     MatPaginatorModule,
+    MatDialogModule,
+    HttpClientModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent {
+  constructor(
+    private dialog: MatDialog,
+    private userService: UserService,
+  ) {}
+
+  ngOnInit() {
+    this.loadUsers();
+  }
+
   sort_by = [
     { value: 'asc', viewValue: 'ASC' },
     { value: 'desc', viewValue: 'DESC' },
@@ -28,20 +43,88 @@ export class DashboardComponent {
     { value: 'oldest', viewValue: 'Oldest' },
   ];
 
-  users = [
-    {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      permission: 'Super Admin',
-      createdDate: '24 Mar, 2024',
-      role: 'Admin',
-    },
-    {
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      permission: 'Admin',
-      createdDate: '25 Mar, 2024',
-      role: 'User',
-    },
-  ];
+  users: any[] = [];
+  total = 0;
+
+  orderBy = '';
+  orderDirection = '';
+  pageNumber = 1;
+  pageSize = 10;
+  search = '';
+
+  loadUsers() {
+    this.userService
+      .getUsers(
+        this.orderBy,
+        this.orderDirection,
+        this.pageNumber,
+        this.pageSize,
+        this.search,
+      )
+      .subscribe({
+        next: (res) => {
+          this.users = res.data.data;
+          this.total = res.data.total;
+        },
+        error: (err) => console.error(err),
+      });
+  }
+
+  onPageChange(event: any) {
+    this.pageNumber = event.pageIndex + 1;
+    this.pageSize = event.pageSize;
+    this.loadUsers();
+  }
+
+  searchTimeout: any;
+
+  onSearch() {
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      this.pageNumber = 1;
+      this.loadUsers();
+    }, 500);
+  }
+
+  openAddUser() {
+    const dialogRef = this.dialog.open(AddUserComponent, {
+      width: '80vw',
+      maxWidth: '95vw',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (result.password !== result.confirmPassword) {
+          alert('Password not match');
+          return;
+        }
+
+        const payload = {
+          firstName: result.firstName,
+          lastName: result.lastName,
+          email: result.email,
+          phone: result.phone,
+          roleId: '8af253a5-6951-4619-826c-62c0c54c6b3a', // mock
+          username: result.username,
+          password: result.password,
+          permissions: [ // mock
+            {
+              permissionId: 'a918acdc-4aeb-4058-94ee-cef86e57ad0d',
+              isReadable: true,
+              isWritable: false,
+              isDeletable: false,
+            },
+          ],
+        };
+
+        this.userService.addUser(payload).subscribe({
+          next: () => {
+            this.loadUsers();
+          },
+          error: (err) => console.error(err),
+        });
+      }
+    });
+  }
 }
