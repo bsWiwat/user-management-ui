@@ -1,0 +1,115 @@
+<div class="px-6 w-full">
+  <p class="text-2xl p-2 font-semibold text-blue-600">Documents</p>
+
+  <div class="flex flex-row items-center gap-4 mb-6">
+    <div class="bg-white rounded-xl p-2 flex items-center gap-4 flex-1">
+      <span class="material-symbols-outlined text-gray-400">search</span>
+      <input type="text" placeholder="Search" class="w-full outline-none" />
+    </div>
+
+    <select class="bg-transparent p-2 outline-none">
+      <option value="" disabled selected>Sort By</option>
+      <option *ngFor="let option of sort_by" [value]="option.value">
+        {{ option.viewValue }}
+      </option>
+    </select>
+
+    <span class="material-symbols-outlined">tune</span>
+  </div>
+
+  <div class="flex justify-between items-center mb-6">
+    <div class="flex gap-2">
+      <span
+        class="material-symbols-outlined p-2 rounded-lg border text-blue-500 hover:bg-blue-500 hover:text-white cursor-pointer"
+      >
+        computer
+      </span>
+      <span
+        class="material-symbols-outlined p-2 rounded-lg border text-blue-500 hover:bg-blue-500 hover:text-white cursor-pointer"
+      >
+        zoom_out_map
+      </span>
+      <span
+        class="material-symbols-outlined p-2 rounded-lg border text-blue-500 hover:bg-blue-500 hover:text-white cursor-pointer"
+      >
+        book_2
+      </span>
+      <span
+        class="material-symbols-outlined p-2 rounded-lg border text-blue-500 hover:bg-blue-500 hover:text-white cursor-pointer"
+      >
+        print
+      </span>
+      <span
+        class="material-symbols-outlined p-2 rounded-lg border text-blue-500 hover:bg-blue-500 hover:text-white cursor-pointer"
+      >
+        delete
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <select class="bg-transparent p-2 border">
+        <option value="" disabled selected>This Month</option>
+        <option *ngFor="let option of sort_by" [value]="option.value">
+          {{ option.viewValue }}
+        </option>
+      </select>
+
+      <select class="bg-transparent p-2 border">
+        <option value="" disabled selected>Documents</option>
+        <option *ngFor="let option of sort_by" [value]="option.value">
+          {{ option.viewValue }}
+        </option>
+      </select>
+
+      <button class="bg-blue-500 w-8 h-8 text-white font-bold rounded">
+        +
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl w-full">
+    <div class="text-lg font-semibold p-4 m-0 border-b">List Documents</div>
+
+    <div
+      *ngFor="let doc of documents"
+      class="grid grid-cols-12 p-4 border-b items-center"
+    >
+      <div class="col-span-2 px-6 flex items-center justify-between">
+        <span
+          class="material-symbols-outlined bg-gray-200 p-2 rounded-lg text-blue-500"
+        >
+          docs
+        </span>
+        <div>
+          <div class="">{{ doc.name }}</div>
+          <div class="text-gray-300">{{ doc.createdDate }}</div>
+        </div>
+      </div>
+      <div class="col-span-9 text-gray-300">{{ doc.description }}</div>
+
+      <div
+        class="col-span-1 text-center gap-2 flex items-center justify-center"
+      >
+        <span
+          class="material-symbols-outlined text-gray-400 cursor-pointer hover:text-yellow-500"
+        >
+          border_color
+        </span>
+        <span
+          class="material-symbols-outlined text-gray-400 cursor-pointer hover:text-red-500"
+        >
+          delete
+        </span>
+      </div>
+    </div>
+  </div>
+  <footer class="flex justify-center items-center bg-transparent">
+    <mat-paginator
+      [length]="100"
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      aria-label="Select page"
+    >
+    </mat-paginator>
+  </footer>
+</div>
