@@ -1,78 +1,137 @@
-<div class="p-4 w-full">
-  <div class="flex items-center justify-between">
-    <h2 mat-dialog-title>Add User</h2>
-    <span
-      class="material-symbols-outlined absolute top-4 right-4 cursor-pointer"
-      (click)="close()"
-      >close</span
-    >
+<form #formRef="ngForm">
+  <div class="p-4 w-full">
+    <div class="flex items-center justify-between">
+      <h2 mat-dialog-title>
+        {{ data ? "Edit User" : "Add User" }}
+      </h2>
+      <span
+        class="material-symbols-outlined absolute top-4 right-4 cursor-pointer"
+        (click)="close()"
+        >close</span
+      >
+    </div>
+
+    <div mat-dialog-content class="grid grid-cols-12 gap-4 border-b pb-4">
+      <input
+        disabled
+        placeholder="User ID *"
+        class="col-span-12 border p-2 rounded"
+        [(ngModel)]="userId"
+      />
+
+      <input
+        name="firstName"
+        placeholder="First Name *"
+        class="col-span-6 border p-2 rounded"
+        [(ngModel)]="firstName"
+        #firstNameRef="ngModel"
+        required
+        [ngClass]="{
+          'border-red-500': firstNameRef.invalid && firstNameRef.touched,
+        }"
+      />
+
+      <input
+        name="lastName"
+        placeholder="Last Name *"
+        class="col-span-6 border p-2 rounded"
+        [(ngModel)]="lastName"
+        #lastNameRef="ngModel"
+        required
+        [ngClass]="{
+          'border-red-500': lastNameRef.invalid && lastNameRef.touched,
+        }"
+      />
+
+      <input
+        name="email"
+        placeholder="Email *"
+        class="col-span-4 border p-2 rounded"
+        [(ngModel)]="email"
+        #emailRef="ngModel"
+        required
+        [ngClass]="{
+          'border-red-500': emailRef.invalid && emailRef.touched,
+        }"
+      />
+      <input
+        name="phone"
+        placeholder="Mobile No"
+        class="col-span-4 border p-2 rounded"
+        [(ngModel)]="phone"
+      />
+      <select
+        name="roleId"
+        class="col-span-4 border p-2 rounded"
+        [(ngModel)]="roleId"
+        #roleRef="ngModel"
+        required
+        [ngClass]="{
+          'border-red-500': roleRef.invalid && roleRef.touched,
+        }"
+      >
+        <option value="" disabled>Select Role Type *</option>
+        <option *ngFor="let r of roles" [value]="r.roleId">
+          {{ r.roleName }}
+        </option>
+      </select>
+
+      <input
+        name="username"
+        placeholder="Username *"
+        class="col-span-4 border p-2 rounded"
+        [(ngModel)]="username"
+        #usernameRef="ngModel"
+        required
+        [ngClass]="{
+          'border-red-500': usernameRef.invalid && usernameRef.touched,
+        }"
+      />
+      <ng-container *ngIf="!data">
+        <input
+          name="password"
+          placeholder="Password *"
+          type="password"
+          class="col-span-4 border p-2 rounded"
+          [(ngModel)]="password"
+          #passwordRef="ngModel"
+          required
+          [ngClass]="{
+            'border-red-500': passwordRef.invalid && passwordRef.touched,
+          }"
+        />
+
+        <input
+          name="confirmPassword"
+          placeholder="Confirm Password *"
+          type="password"
+          class="col-span-4 border p-2 rounded"
+          [(ngModel)]="confirmPassword"
+          #confirmPasswordRef="ngModel"
+          required
+          [ngClass]="{
+            'border-red-500':
+              confirmPasswordRef.invalid && confirmPasswordRef.touched,
+          }"
+        />
+      </ng-container>
+    </div>
+
+    <div mat-dialog-actions class="flex justify-end gap-2 mt-4">
+      <button
+        (click)="submit()"
+        (click)="submit()"
+        [disabled]="formRef.invalid"
+        class="w-24 text-center text-sm p-2 rounded-md bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
+      >
+        {{ data ? "Edit User" : "Add User" }}
+      </button>
+      <button
+        (click)="close()"
+        class="w-24 text-center text-sm p-2 rounded-md text-gray-700"
+      >
+        Cancel
+      </button>
+    </div>
   </div>
-
-  <div mat-dialog-content class="grid grid-cols-12 gap-4 border-b pb-4">
-    <input
-      disabled
-      placeholder="User ID *"
-      class="col-span-12 border p-2 rounded"
-    />
-
-    <input
-      placeholder="First Name *"
-      class="col-span-6 border p-2 rounded"
-      [(ngModel)]="firstName"
-    />
-    <input
-      placeholder="Last Name *"
-      class="col-span-6 border p-2 rounded"
-      [(ngModel)]="lastName"
-    />
-
-    <input
-      placeholder="Email *"
-      class="col-span-4 border p-2 rounded"
-      [(ngModel)]="email"
-    />
-    <input
-      placeholder="Mobile No"
-      class="col-span-4 border p-2 rounded"
-      [(ngModel)]="phone"
-    />
-    <select class="col-span-4 border p-2 rounded" [(ngModel)]="role">
-      <option value="" disabled>Select Role Type *</option>
-      <option value="admin">Admin</option>
-      <option value="user">User</option>
-    </select>
-
-    <input
-      placeholder="Username *"
-      class="col-span-4 border p-2 rounded"
-      [(ngModel)]="username"
-    />
-    <input
-      placeholder="Password *"
-      type="password"
-      class="col-span-4 border p-2 rounded"
-      [(ngModel)]="password"
-    />
-    <input
-      placeholder="Confirm Password *"
-      type="password"
-      class="col-span-4 border p-2 rounded"
-      [(ngModel)]="confirmPassword"
-    />
-  </div>
-
-  <div mat-dialog-actions class="flex justify-end gap-2 mt-4">
-    <button
-      (click)="submit()"
-      class="w-24 text-center text-sm p-2 rounded-md bg-blue-500 text-white"
-    >
-      Add User
-    </button>
-    <button
-      (click)="close()"
-      class="w-24 text-center text-sm p-2 rounded-md text-gray-700"
-    >
-      Cancel
-    </button>
-  </div>
-</div>
+</form>
