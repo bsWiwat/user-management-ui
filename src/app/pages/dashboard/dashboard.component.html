@@ -75,11 +75,13 @@
       >
         <span
           class="material-symbols-outlined text-gray-400 cursor-pointer hover:text-yellow-500"
+          (click)="openEditUser(user)"
         >
           border_color
         </span>
         <span
           class="material-symbols-outlined text-gray-400 cursor-pointer hover:text-red-500"
+          (click)="deleteUser(user)"
         >
           delete
         </span>

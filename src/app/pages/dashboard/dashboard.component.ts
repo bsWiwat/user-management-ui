@@ -95,20 +95,16 @@ export class DashboardComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        if (result.password !== result.confirmPassword) {
-          alert('Password not match');
-          return;
-        }
-
         const payload = {
           firstName: result.firstName,
           lastName: result.lastName,
           email: result.email,
           phone: result.phone,
-          roleId: '8af253a5-6951-4619-826c-62c0c54c6b3a', // mock
+          roleId: result.roleId,
           username: result.username,
           password: result.password,
-          permissions: [ // mock
+          permissions: [
+            // mock
             {
               permissionId: 'a918acdc-4aeb-4058-94ee-cef86e57ad0d',
               isReadable: true,
@@ -125,6 +121,38 @@ export class DashboardComponent {
           error: (err) => console.error(err),
         });
       }
+    });
+  }
+
+  openEditUser(user: any) {
+    const dialogRef = this.dialog.open(AddUserComponent, {
+      width: '80vw',
+      maxWidth: '95vw',
+      data: user,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.userService.updateUser(user.userId, result).subscribe({
+          next: () => this.loadUsers(),
+          error: (err) => console.error(err),
+        });
+      }
+    });
+  }
+
+  deleteUser(user: any) {
+    const confirmDelete = confirm(
+      `Delete user ${user.firstName} ${user.lastName}?`,
+    );
+
+    if (!confirmDelete) return;
+
+    this.userService.deleteUser(user.userId).subscribe({
+      next: () => {
+        this.loadUsers();
+      },
+      error: (err) => console.error(err),
     });
   }
 }

@@ -1,6 +1,8 @@
 <div class="p-4 w-full">
   <div class="flex items-center justify-between">
-    <h2 mat-dialog-title>Add User</h2>
+    <h2 mat-dialog-title>
+      {{ data ? "Edit User" : "Add User" }}
+    </h2>
     <span
       class="material-symbols-outlined absolute top-4 right-4 cursor-pointer"
       (click)="close()"
@@ -13,6 +15,7 @@
       disabled
       placeholder="User ID *"
       class="col-span-12 border p-2 rounded"
+      [(ngModel)]="userId"
     />
 
     <input
@@ -36,10 +39,11 @@
       class="col-span-4 border p-2 rounded"
       [(ngModel)]="phone"
     />
-    <select class="col-span-4 border p-2 rounded" [(ngModel)]="role">
+    <select class="col-span-4 border p-2 rounded" [(ngModel)]="roleId">
       <option value="" disabled>Select Role Type *</option>
-      <option value="admin">Admin</option>
-      <option value="user">User</option>
+      <option *ngFor="let r of roles" [value]="r.roleId">
+        {{ r.roleName }}
+      </option>
     </select>
 
     <input
@@ -47,18 +51,21 @@
       class="col-span-4 border p-2 rounded"
       [(ngModel)]="username"
     />
-    <input
-      placeholder="Password *"
-      type="password"
-      class="col-span-4 border p-2 rounded"
-      [(ngModel)]="password"
-    />
-    <input
-      placeholder="Confirm Password *"
-      type="password"
-      class="col-span-4 border p-2 rounded"
-      [(ngModel)]="confirmPassword"
-    />
+    <ng-container *ngIf="!data">
+      <input
+        placeholder="Password *"
+        type="password"
+        class="col-span-4 border p-2 rounded"
+        [(ngModel)]="password"
+      />
+
+      <input
+        placeholder="Confirm Password *"
+        type="password"
+        class="col-span-4 border p-2 rounded"
+        [(ngModel)]="confirmPassword"
+      />
+    </ng-container>
   </div>
 
   <div mat-dialog-actions class="flex justify-end gap-2 mt-4">
@@ -66,7 +73,7 @@
       (click)="submit()"
       class="w-24 text-center text-sm p-2 rounded-md bg-blue-500 text-white"
     >
-      Add User
+      {{ data ? "Edit User" : "Add User" }}
     </button>
     <button
       (click)="close()"

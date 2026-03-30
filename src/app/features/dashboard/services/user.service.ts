@@ -30,4 +30,19 @@ export class UserService {
   addUser(payload: any) {
     return this.http.post(`${environment.apiBaseUrl}/api/user/user`, payload);
   }
+
+  updateUser(id: string, payload: any) {
+    return this.http.put(
+      `${environment.apiBaseUrl}/api/User/user/${id}`,
+      payload,
+    );
+  }
+
+  deleteUser(id: string) {
+    return this.http.delete(`${environment.apiBaseUrl}/api/user/user/${id}`);
+  }
+
+  getRoles() {
+    return this.http.get<any>(`${environment.apiBaseUrl}/api/User/roles`);
+  }
 }
