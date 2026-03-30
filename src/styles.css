@@ -1,7 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
+@import "ngx-toastr/toastr";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Open Sans", sans-serif !important;
+}
+
+.mat-typography h1,
+.mat-typography h2,
+.mat-typography h3,
+.mat-typography h4,
+.mat-typography h5,
+.mat-typography h6,
+.mat-typography a,
+.mat-typography p,
+.mat-typography li {
+  font-family: "Open Sans", sans-serif !important;
+}

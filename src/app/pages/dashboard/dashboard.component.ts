@@ -1,12 +1,172 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { CommonModule } from '@angular/common';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AddUserComponent } from '../../features/dashboard/add-user/add-user.component';
+import { HttpClientModule } from '@angular/common/http';
+import { UserService } from '../../features/dashboard/services/user.service';
+import { ToastrService } from 'ngx-toastr';
+import { User } from '../../features/dashboard/models/User';
+import { CreateUserDTO } from '../../features/dashboard/models/UserDTO';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [],
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    FormsModule,
+    MatPaginatorModule,
+    MatDialogModule,
+    HttpClientModule,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent {
-  
+  constructor(
+    private dialog: MatDialog,
+    private userService: UserService,
+    private toastr: ToastrService,
+  ) {}
+
+  ngOnInit() {
+    this.loadUsers();
+  }
+
+  sort_by = [
+    { value: '', viewValue: 'None' },
+    { value: 'name', viewValue: 'Name' },
+    { value: 'createddate', viewValue: 'Date Create' },
+  ];
+
+  users: User[] = [];
+  total = 0;
+
+  orderBy = '';
+  orderDirection = '';
+  pageNumber = 1;
+  pageSize = 10;
+  search = '';
+
+  loadUsers() {
+    this.userService
+      .getUsers(
+        this.orderBy,
+        this.orderDirection,
+        this.pageNumber,
+        this.pageSize,
+        this.search,
+      )
+      .subscribe({
+        next: (res) => {
+          this.users = res.data.data;
+          this.total = res.data.total;
+        },
+        error: (err) => console.error(err),
+      });
+  }
+
+  onPageChange(event: any) {
+    this.pageNumber = event.pageIndex + 1;
+    this.pageSize = event.pageSize;
+    this.loadUsers();
+  }
+
+  searchTimeout: any;
+
+  onSearch() {
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      this.pageNumber = 1;
+      this.loadUsers();
+    }, 500);
+  }
+
+  openAddUser() {
+    const dialogRef = this.dialog.open(AddUserComponent, {
+      width: '80vw',
+      maxWidth: '95vw',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const payload: CreateUserDTO = {
+          firstName: result.firstName,
+          lastName: result.lastName,
+          email: result.email,
+          phone: result.phone,
+          roleId: result.roleId,
+          username: result.username,
+          password: result.password,
+          permissions: [
+            // mock
+            {
+              permissionId: 'a918acdc-4aeb-4058-94ee-cef86e57ad0d',
+              isReadable: true,
+              isWritable: false,
+              isDeletable: false,
+            },
+          ],
+        };
+
+        this.userService.addUser(payload).subscribe({
+          next: () => {
+            this.toastr.success('User created successfully');
+            this.loadUsers();
+          },
+          error: () => {
+            this.toastr.error('Create failed');
+          },
+        });
+      }
+    });
+  }
+
+  openEditUser(user: User) {
+    const dialogRef = this.dialog.open(AddUserComponent, {
+      width: '80vw',
+      maxWidth: '95vw',
+      data: user,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.userService.updateUser(user.userId, result).subscribe({
+          next: () => {
+            this.toastr.success('User updated');
+            this.loadUsers();
+          },
+          error: () => {
+            this.toastr.error('Update failed');
+          },
+        });
+      }
+    });
+  }
+
+  deleteUser(user: User) {
+    const confirmDelete = confirm(
+      `Delete user ${user.firstName} ${user.lastName}?`,
+    );
+
+    if (!confirmDelete) return;
+
+    this.userService.deleteUser(user.userId).subscribe({
+      next: () => {
+        this.toastr.success('User deleted');
+        this.loadUsers();
+      },
+      error: () => {
+        this.toastr.error('Delete failed');
+      },
+    });
+  }
 }
