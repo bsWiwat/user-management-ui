@@ -26,4 +26,8 @@ export class UserService {
       params: params,
     });
   }
+
+  addUser(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}/api/user/user`, payload);
+  }
 }

@@ -95,18 +95,34 @@ export class DashboardComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('New User:', result);
+        if (result.password !== result.confirmPassword) {
+          alert('Password not match');
+          return;
+        }
 
-        this.users.push({
-          name: result.firstName + ' ' + result.lastName,
+        const payload = {
+          firstName: result.firstName,
+          lastName: result.lastName,
           email: result.email,
-          role: result.role,
-          createdDate: new Date().toLocaleDateString('en-US', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-          }),
-          permission: result.role === 'admin' ? 'Admin' : 'User',
+          phone: result.phone,
+          roleId: '8af253a5-6951-4619-826c-62c0c54c6b3a', // mock
+          username: result.username,
+          password: result.password,
+          permissions: [ // mock
+            {
+              permissionId: 'a918acdc-4aeb-4058-94ee-cef86e57ad0d',
+              isReadable: true,
+              isWritable: false,
+              isDeletable: false,
+            },
+          ],
+        };
+
+        this.userService.addUser(payload).subscribe({
+          next: () => {
+            this.loadUsers();
+          },
+          error: (err) => console.error(err),
         });
       }
     });
